@@ -1,17 +1,60 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import java.sql.*;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
+public class Main {
+    public static void main(String[] args) {
+
+        String url = "jdbc:oracle:thin:@localhost:1521:xe";
+        String usuario = "RIBERA";
+        String contraseña = "ribera";
+
+        // INSERTAR DEPARTAMENTOS
+        try (Connection conn = DriverManager.getConnection(url, usuario, contraseña)) {
+
+            String sqlDep = "INSERT INTO DEPARTAMENTO (id, nombre) VALUES (?, ?)";
+
+            try (PreparedStatement ps = conn.prepareStatement(sqlDep)) {
+                // Dept 1
+                ps.setInt(1, 10);
+                ps.setString(2, "SISTEMAS");
+                ps.executeUpdate();
+
+                // Dept 2
+                ps.setInt(1, 20);
+                ps.setString(2, "CONTABILIDAD");
+                ps.executeUpdate();
+
+                System.out.println("Departamentos insertados correctamente.");
+            }
+
+            // INSERTAR EMPLEADOS
+            String sqlEmp = "INSERT INTO EMPLEADO (id, nombre, salario, departamento_id) VALUES (?, ?, ?, ?)";
+
+            try (PreparedStatement ps = conn.prepareStatement(sqlEmp)) {
+                ps.setInt(1, 101);
+                ps.setString(2, "Unai");
+                ps.setDouble(3, 4500.0);
+                ps.setInt(4, 10);
+                ps.executeUpdate();
+
+                ps.setInt(1, 201);
+                ps.setString(2, "Chema");
+                ps.setDouble(3, 3800.0);
+                ps.setInt(4, 20);
+                ps.executeUpdate();
+
+                ps.setInt(1, 102);
+                ps.setString(2, "Luz");
+                ps.setDouble(3, 4200.0);
+                ps.setInt(4, 10);
+                ps.executeUpdate();
+
+                System.out.println("Empleados asignados correctamente.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al insertar datos: " + e.getMessage());
         }
     }
 }
